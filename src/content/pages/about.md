@@ -15,6 +15,8 @@ TODO — one paragraph, first person, that says who you are and what you spend
 your working hours on. Avoid the résumé voice here; this is the page people read
 when they want to know whether to email you.
 
+![A placeholder portrait labelled PORTRAIT at 1000 by 1250 pixels.](../../assets/images/portrait.jpg)
+
 ## What I work on
 
 TODO — two or three sentences on the area you would happily talk about for an

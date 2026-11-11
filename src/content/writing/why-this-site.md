@@ -3,6 +3,9 @@ title: Why this site is built this way
 description: The stack, the visual direction, and the rule that decided both — worth writing down before the reasons get lost.
 pubDate: 2026-11-10
 tags: ['meta', 'design']
+cover: ../../assets/images/cover-why-this-site.jpg
+coverAlt: A placeholder plate labelled COVER at 1600 by 900 pixels.
+coverCaption: Temporary plate — replace with a real photograph.
 ---
 
 Every personal site starts with a decision that is easy to make and expensive to
@@ -36,6 +39,8 @@ Only the first layer carries an upgrade burden, so it is the only one worth
 minimising. This site runs on eight dependencies and borrows its visual values
 from sites whose code it does not contain.
 
+![A placeholder figure labelled FIGURE 01 at 1400 by 900 pixels.](../../assets/images/figure-process.jpg)
+
 ```ts
 // The typographic contract, in one place.
 const tokens = {
@@ -56,6 +61,8 @@ matters for something you intend to keep.
 
 So: one narrow column, serif-led type, grouping by whitespace instead of boxes,
 and monospace reserved for dates and tags.[^meta]
+
+![A placeholder figure labelled FIGURE 02 at 1200 by 1200 pixels.](../../assets/images/figure-detail.jpg)
 
 [^meta]: The monospace face is the one thing borrowed from the terminal
     direction. It earns its place because tabular figures stop dates from

@@ -8,30 +8,42 @@ import { z } from 'astro/zod';
  */
 const writing = defineCollection({
   loader: glob({ base: './src/content/writing', pattern: '**/*.md' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    tags: z.array(z.string()).default([]),
-    draft: z.boolean().default(false),
-    lang: z.string().default('en'),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      tags: z.array(z.string()).default([]),
+      draft: z.boolean().default(false),
+      lang: z.string().default('en'),
+
+      // Optional plate above the body. Resolved through Astro's image pipeline,
+      // so the file must live inside the repo and is optimised at build time.
+      cover: image().optional(),
+      coverAlt: z.string().default(''),
+      coverCaption: z.string().optional(),
+    }),
 });
 
 /** Projects — one Markdown file per work entry, URL is /projects/<slug>/. */
 const projects = defineCollection({
   loader: glob({ base: './src/content/projects', pattern: '**/*.md' }),
-  schema: z.object({
-    name: z.string(),
-    summary: z.string(),
-    stack: z.array(z.string()).default([]),
-    repo: z.url().optional(),
-    live: z.url().optional(),
-    year: z.number(),
-    featured: z.boolean().default(false),
-    order: z.number().default(0),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      summary: z.string(),
+      stack: z.array(z.string()).default([]),
+      repo: z.url().optional(),
+      live: z.url().optional(),
+      year: z.number(),
+      featured: z.boolean().default(false),
+      order: z.number().default(0),
+
+      cover: image().optional(),
+      coverAlt: z.string().default(''),
+      coverCaption: z.string().optional(),
+    }),
 });
 
 /** Pages — prose that is not a dated piece: About, and anything else later. */

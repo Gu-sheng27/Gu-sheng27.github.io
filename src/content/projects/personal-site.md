@@ -7,6 +7,9 @@ live: https://gu-sheng27.github.io
 year: 2026
 featured: true
 order: 1
+cover: ../../assets/images/figure-process.jpg
+coverAlt: A placeholder figure standing in for a screenshot of this site.
+coverCaption: Temporary image — replace with a screenshot of the built site.
 ---
 
 The site you are reading. Built from scratch rather than forked from a theme, so

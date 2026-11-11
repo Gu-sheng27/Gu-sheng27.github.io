@@ -3,6 +3,9 @@ title: Hello, world
 description: The first entry in a notebook that did not exist yesterday — what this site is for, and what it deliberately is not.
 pubDate: 2026-11-11
 tags: ['meta']
+cover: ../../assets/images/cover-hello-world.jpg
+coverAlt: A placeholder plate labelled COVER at 1600 by 900 pixels.
+coverCaption: Temporary plate — replace with a real photograph.
 ---
 
 This is the first thing published here, so it should probably say what this place is.

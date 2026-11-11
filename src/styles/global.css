@@ -207,6 +207,25 @@
   content: '';
 }
 
+/* Figures: a plate sits flush with the measure, its caption in the meta face. */
+.prose :where(img, video):not(:where([class~='not-prose'] *)) {
+  width: 100%;
+  height: auto;
+  margin-block: 2rem;
+}
+
+.prose :where(figure):not(:where([class~='not-prose'] *)) {
+  margin-block: 2.25rem;
+}
+
+.prose :where(figcaption):not(:where([class~='not-prose'] *)) {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+  margin-top: 0.6rem;
+}
+
 /* Footnotes: the book device this direction leans on hardest. */
 .prose .footnotes {
   margin-top: 3rem;
