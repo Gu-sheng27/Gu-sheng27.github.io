@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectItem from '../../components/ProjectItem.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => {
+  const byFeatured = Number(b.data.featured) - Number(a.data.featured);
+  return byFeatured !== 0 ? byFeatured : a.data.order - b.data.order;
+});
+---
+
+<BaseLayout title="Projects" description="Things built, and what they were for.">
+  <h1 class="text-[1.6rem] tracking-tight">Projects</h1>
+  <p class="mt-2 text-[0.95rem] text-ink-muted">
+    {projects.length}
+    {projects.length === 1 ? ' entry' : ' entries'}, most relevant first.
+  </p>
+
+  <div class="mt-10 space-y-9">
+    {projects.map((entry) => <ProjectItem entry={entry} />)}
+  </div>
+
+  {
+    projects.length === 0 && (
+      <p class="mt-8 text-ink-muted">
+        Nothing here yet. Add a Markdown file under
+        <code class="font-mono text-[0.9em]">src/content/projects/</code>.
+      </p>
+    )
+  }
+</BaseLayout>

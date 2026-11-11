@@ -1,0 +1,119 @@
+---
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../site';
+
+interface Props {
+  /** Page title without the site suffix. Omit on the home page. */
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title ? `${title} — ${site.title}` : `${site.title} — ${site.tagline}`;
+const desc = description ?? site.description;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${site.title} — Writing`}
+      href="/rss.xml"
+    />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={site.title} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={desc} />
+
+    {/*
+      Runs before first paint, so the page never flashes white in dark mode.
+      Kept inline and dependency-free on purpose: a module import is too late.
+      The click handler is delegated to the document because ClientRouter
+      replaces the DOM on navigation and per-button listeners would be lost.
+    */}
+    <script is:inline>
+      (() => {
+        const KEY = 'theme';
+        const root = document.documentElement;
+
+        const read = () => {
+          let stored = null;
+          try {
+            stored = localStorage.getItem(KEY);
+          } catch {}
+          if (stored === 'light' || stored === 'dark') return stored;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        const apply = () => {
+          root.dataset.theme = read();
+        };
+
+        apply();
+        document.addEventListener('astro:after-swap', apply);
+
+        document.addEventListener('click', (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const button = target.closest('[data-theme-toggle]');
+          if (!button) return;
+
+          const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          try {
+            localStorage.setItem(KEY, next);
+          } catch {}
+
+          // Suppress transitions for one frame so nothing animates the switch.
+          root.dataset.themeSwitching = '';
+          root.dataset.theme = next;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              delete root.dataset.themeSwitching;
+            });
+          });
+
+          button.setAttribute('aria-label', `Switch to ${next === 'dark' ? 'light' : 'dark'} mode`);
+        });
+      })();
+    </script>
+
+    <ClientRouter />
+  </head>
+
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-raised focus:px-3 focus:py-2 focus:text-sm"
+    >
+      Skip to content
+    </a>
+
+    <Header />
+
+    <main id="main" data-pagefind-body class="wrap flex-1 pt-6 pb-16 sm:pt-10">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  entry: CollectionEntry<'writing'>;
+}
+
+const { entry } = Astro.props;
+const { title, description, pubDate } = entry.data;
+const href = `/writing/${entry.id}/`;
+---
+
+<article>
+  <FormattedDate date={pubDate} />
+  <h3 class="mt-1 text-[1.1rem] leading-snug tracking-tight">
+    <a href={href} class="link">{title}</a>
+  </h3>
+  <p class="mt-1 text-[0.95rem] leading-relaxed text-ink-muted">{description}</p>
+</article>

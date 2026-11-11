@@ -1,0 +1,11 @@
+# Normalize line endings so the repo is identical on Windows and in CI.
+* text=auto eol=lf
+
+# Binary assets must never be touched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.woff binary
+*.woff2 binary

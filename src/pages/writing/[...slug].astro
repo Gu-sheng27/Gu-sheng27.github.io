@@ -1,0 +1,93 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { updatedLabel } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+    (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+  );
+
+  return entries.map((entry, index) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      newer: entries[index + 1] ?? null,
+      older: entries[index - 1] ?? null,
+    },
+  }));
+}
+
+const { entry, newer, older } = Astro.props;
+const { Content, headings } = await render(entry);
+const { title, description, pubDate, updatedDate, tags } = entry.data;
+const updated = updatedLabel(pubDate, updatedDate);
+const toc = headings.filter(
+  (heading: MarkdownHeading) =>
+    // The GFM footnote section is an h2 too; it is not a chapter.
+    heading.depth === 2 && heading.slug !== 'footnotes'
+);
+---
+
+<BaseLayout title={title} description={description}>
+  <article>
+    <header>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <FormattedDate date={pubDate} />
+        {
+          updated && (
+            <>
+              <span class="meta" aria-hidden="true">
+                ·
+              </span>
+              <span class="meta">{updated}</span>
+            </>
+          )
+        }
+        {
+          tags.length > 0 && (
+            <>
+              <span class="meta" aria-hidden="true">
+                ·
+              </span>
+              <span class="meta normal-case tracking-normal">{tags.join(' / ')}</span>
+            </>
+          )
+        }
+      </div>
+
+      <h1 class="mt-2 text-[1.75rem] leading-tight tracking-tight sm:text-[2.05rem]">{title}</h1>
+      <p class="mt-3 text-[1.02rem] leading-relaxed text-ink-muted">{description}</p>
+    </header>
+
+    {
+      toc.length >= 3 && (
+        <nav aria-labelledby="contents" class="mt-10 border-y border-rule py-4">
+          <h2 id="contents" class="meta">
+            Contents
+          </h2>
+          <ol class="mt-2 space-y-1 text-[0.95rem]">
+            {toc.map((heading) => (
+              <li>
+                <a href={`#${heading.slug}`} class="link">
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+
+    <div class="prose mt-10">
+      <Content />
+    </div>
+
+    <nav class="mt-16 flex flex-wrap gap-4 border-t border-rule pt-6 text-[0.95rem]" aria-label="More writing">
+      {older && <a href={`/writing/${older.id}/`} class="link">← {older.data.title}</a>}
+      {newer && <a href={`/writing/${newer.id}/`} class="link ml-auto">{newer.data.title} →</a>}
+    </nav>
+  </article>
+</BaseLayout>

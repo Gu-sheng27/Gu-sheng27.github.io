@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WritingItem from '../../components/WritingItem.astro';
+
+const writing = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const years = new Map<number, typeof writing>();
+for (const entry of writing) {
+  const year = entry.data.pubDate.getFullYear();
+  years.set(year, [...(years.get(year) ?? []), entry]);
+}
+---
+
+<BaseLayout title="Writing" description="Everything published here, newest first.">
+  <h1 class="text-[1.6rem] tracking-tight">Writing</h1>
+  <p class="mt-2 text-[0.95rem] text-ink-muted">
+    {writing.length}
+    {writing.length === 1 ? ' piece' : ' pieces'}, newest first. There is also an
+    <a href="/rss.xml" class="link">RSS feed</a>.
+  </p>
+
+  {
+    [...years.entries()].map(([year, entries]) => (
+      <section class="mt-10" aria-label={`Writing from ${year}`}>
+        <h2 class="meta border-b border-rule pb-2">{year}</h2>
+        <div class="mt-6 space-y-7">
+          {entries.map((entry) => (
+            <WritingItem entry={entry} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    writing.length === 0 && (
+      <p class="mt-8 text-ink-muted">
+        Nothing published yet. Add a Markdown file under
+        <code class="font-mono text-[0.9em]">src/content/writing/</code>.
+      </p>
+    )
+  }
+</BaseLayout>

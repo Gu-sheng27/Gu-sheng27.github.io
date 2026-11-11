@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Search" description="Search everything published here.">
+  <h1 class="text-[1.6rem] tracking-tight">Search</h1>
+
+  <div class="mt-6">
+    <label for="q" class="meta block">Query</label>
+    <input
+      id="q"
+      type="search"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="Search writing and projects"
+      class="mt-2 w-full border-0 border-b border-rule bg-transparent pb-2 text-[1.1rem] placeholder:text-ink-faint focus:border-ink focus:outline-none"
+    />
+  </div>
+
+  <p id="status" class="meta mt-6" role="status" aria-live="polite"></p>
+  <ul id="results" class="mt-8 space-y-6"></ul>
+</BaseLayout>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('q');
+    const list = document.getElementById('results');
+    const status = document.getElementById('status');
+    if (!input || !list || !status) return;
+
+    let pagefind = null;
+
+    const run = async () => {
+      if (!pagefind) return;
+      const term = input.value.trim();
+      list.replaceChildren();
+
+      if (term.length < 2) {
+        status.textContent = '';
+        return;
+      }
+
+      const found = await pagefind.search(term);
+      const items = await Promise.all(found.results.slice(0, 10).map((r) => r.data()));
+
+      status.textContent =
+        items.length === 0
+          ? 'No results.'
+          : `${items.length} result${items.length === 1 ? '' : 's'}`;
+
+      for (const item of items) {
+        const li = document.createElement('li');
+
+        const link = document.createElement('a');
+        link.href = item.url;
+        link.className = 'link';
+        link.textContent = (item.meta && item.meta.title) || item.url;
+
+        const excerpt = document.createElement('p');
+        excerpt.className = 'mt-1 text-[0.95rem] leading-relaxed text-ink-muted';
+        excerpt.innerHTML = item.excerpt;
+
+        li.append(link, excerpt);
+        list.append(li);
+      }
+    };
+
+    (async () => {
+      try {
+        // Pagefind ships in `dist/` after `pnpm build`; it does not exist in dev.
+        pagefind = await import('/pagefind/pagefind.js');
+        await pagefind.init();
+      } catch {
+        status.textContent =
+          'The search index is generated at build time. Run `pnpm build && pnpm preview` to try it.';
+        return;
+      }
+
+      input.addEventListener('input', run);
+      await run();
+    })();
+  })();
+</script>

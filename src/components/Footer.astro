@@ -1,0 +1,41 @@
+---
+import { Icon } from 'astro-icon/components';
+import { site } from '../site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="wrap pb-14">
+  <hr class="rule mb-8" />
+
+  <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-4">
+    <p class="meta">© {year} {site.author}</p>
+
+    <ul class="flex items-center gap-4">
+      {
+        site.social.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="inline-flex items-center gap-1.5 text-[0.95rem] text-ink-muted transition-colors hover:text-ink"
+              rel="me noopener"
+              target="_blank"
+            >
+              <Icon name={item.icon} class="size-[0.95rem]" aria-hidden="true" />
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a
+          href="/rss.xml"
+          class="inline-flex items-center gap-1.5 text-[0.95rem] text-ink-muted transition-colors hover:text-ink"
+        >
+          <Icon name="lucide:rss" class="size-[0.95rem]" aria-hidden="true" />
+          RSS
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>

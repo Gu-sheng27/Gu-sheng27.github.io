@@ -1,0 +1,28 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  aria-label="Switch to dark mode"
+  class="-m-2 inline-flex items-center justify-center p-2 text-ink-faint transition-colors hover:text-ink"
+>
+  <Icon name="lucide:sun" class="icon-sun size-[1.05rem]" aria-hidden="true" />
+  <Icon name="lucide:moon" class="icon-moon size-[1.05rem]" aria-hidden="true" />
+</button>
+
+<style>
+  /* Icon state is driven by CSS off the root attribute: no JS, no re-render. */
+  .icon-moon {
+    display: none;
+  }
+
+  :global([data-theme='dark']) .icon-moon {
+    display: block;
+  }
+
+  :global([data-theme='dark']) .icon-sun {
+    display: none;
+  }
+</style>
