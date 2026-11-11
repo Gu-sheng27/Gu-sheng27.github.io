@@ -16,7 +16,7 @@ const OUT = 'src/assets/images';
 const paper = '#efe9dd';
 const ink = '#8a8175';
 
-const svg = ({ width, height, label, sub }) => {
+const svg = ({ width, height, label, sub, tag }) => {
   const unit = Math.min(width, height);
   const pad = Math.round(unit * 0.055);
   const labelSize = Math.round(unit * 0.052);
@@ -34,6 +34,9 @@ const svg = ({ width, height, label, sub }) => {
     <path d="M${width - pad - corner} ${pad} L${width - pad} ${pad} L${width - pad} ${pad + corner}"/>
     <path d="M${pad} ${height - pad - corner} L${pad} ${height - pad} L${pad + corner} ${height - pad}"/>
     <path d="M${width - pad - corner} ${height - pad} L${width - pad} ${height - pad} L${width - pad} ${height - pad - corner}"/>
+  </g>
+  <g fill="${ink}" font-family="monospace">
+    <text x="${pad + Math.round(unit * 0.04)}" y="${pad + Math.round(unit * 0.065)}" font-size="${Math.round(unit * 0.02)}" opacity="0.75" letter-spacing="1">${tag}</text>
   </g>
   <g fill="${ink}" font-family="monospace" text-anchor="middle">
     <text x="${width / 2}" y="${height / 2}" font-size="${labelSize}" letter-spacing="${Math.round(labelSize * 0.14)}">${label}</text>
@@ -55,7 +58,7 @@ await mkdir(OUT, { recursive: true });
 
 for (const file of files) {
   const target = `${OUT}/${file.name}`;
-  await sharp(Buffer.from(svg(file)))
+  await sharp(Buffer.from(svg({ ...file, tag: file.name })))
     .jpeg({ quality: 84, mozjpeg: true })
     .toFile(target);
   console.log(`wrote ${target} (${file.width}×${file.height})`);
